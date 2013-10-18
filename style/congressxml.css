@@ -21,65 +21,87 @@ p {
 }
 
 section.form, section.endorsement {
-    text-align: center;
+	text-align: center;
 }
 
-section.legis-body {
-    border: dashed black;
-    border-width: 0.1em 0em;
+section.legis-body, section.resolution-body, section.amendment-body {
+	border: dashed black;
+	border-width: 0.1em 0em;
 }
 
-section.legis-body::before {
-    content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
-    font-style: italic;
-    margin-left: 2em;
-    line-height: 4;
+section.legis-body > section.section:first-child::before,
+section.resolution-body > section.section:first-child::before,
+section.amendment-body > section.section:first-child::before {
+	display: block;
+	content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
+	font-style: italic;
+	margin-left: 2em;
+	line-height: 4;
+}
+
+section.section[data-display-inline="yes-display-inline"] {
+	display: inline;
+}
+
+section.legis-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
+section.resolution-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
+section.amendment-body > section.section[data-display-inline="yes-display-inline"]:first-child::before {
+	display: inline;
+	line-height: 1;
+}
+
+section.section[data-indent="down1"] {
+	margin-left: 1em;
 }
 
 p.distribution-code {
-    text-align: right;
-    font-size: 85%;
+	text-align: right;
+	font-size: 85%;
 }
 
 p.calendar {
-    text-align: right;
-    font-weight: bold;
-    font-size: 175%;
+	text-align: right;
+	font-weight: bold;
+	font-size: 175%;
 }
 
 p.congress, p.session, p.action-date {
-    font-variant: small-caps;
+	font-variant: small-caps;
 }
 
 p.legis-num {
-    font-size: 250%;
-    font-weight: bold;
+	font-size: 250%;
+	font-weight: bold;
 }
 
 p.current-chamber::before, p.legis-type::before {
-    display: block;
-    border-top: 1px solid black;
-    width: 50%;
-    content: "";
-    margin: -1em auto 1em;
+	display: block;
+	border-top: 1px solid black;
+	width: 50%;
+	content: "";
+	margin: -1em auto 1em;
 }
 
 p.legis-type {
-    font-size: 200%;
-    font-weight: bold;
+	font-size: 200%;
+	font-weight: bold;
 }
 
-span.enum::before {
-    content: "Sec. ";
+section.section > span.enum::before {
+	content: "Sec. ";
 }
 
-section.section[data-section-type="section-one"] span.enum::before {
-    content: "Section ";
+section.section[data-section-type="section-one"] > span.enum::before {
+	content: "Section ";
 }
 
-span.enum::before, span.enum, span.header {
-    font-variant: small-caps;
-    font-weight: bolder;
+section.section[data-section-type="undesignated-section"] > span.enum::before {
+	content: "";
+}
+
+section.section > span.enum, section.section > span.header {
+	font-variant: small-caps;
+	font-weight: bolder;
 }
 
 p.text {
@@ -89,40 +111,48 @@ p.text {
 	text-align: justify;
 }
 
+span.enum + p.text {
+	display: inline;
+}
+
 p.attestor::before {
-    display: block;
-    font-family: serif;
-    font-variant: normal;
-    content: "Attest:";
-    margin: 0.75em -1em;
+	display: block;
+	font-family: serif;
+	font-variant: normal;
+	content: "Attest:";
+	margin: 0.75em -1em;
 }
 
 p.attestor {
-    font-variant: small-caps;
-    margin: 0.5em 1em;
+	font-variant: small-caps;
+	margin: 0.5em 1em;
 }
 
 p.role {
-    font-style: italic;
-    margin: 0em 3em auto;
+	font-style: italic;
+	margin: 0em 3em auto;
 }
 
 p.role::after {
-    content: "."
+	content: "."
 }
 
 span.sponsor {
-    font-variant: small-caps;
+	font-variant: small-caps;
 }
 
 span.quote::before {
-    content: open-quote;
+	content: open-quote;
 }
 
 span.quote::after {
-    content: close-quote;
+	content: close-quote;
 }
 
 span.short-title {
-    color: #C00;
+	color: #C00;
+}
+
+a.entity-ref[data-proposed="true"] {
+	font-style: italic;
 }

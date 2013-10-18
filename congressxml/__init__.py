@@ -1,11 +1,11 @@
 from lxml import etree
 
-def convert_element(e):
-	xml_tag = e.tag
+def convert_element(xml_element):
+	xml_tag = xml_element.tag
 
 	html_attributes = { "class": xml_tag }
 
-	for ( name, value ) in e.items():
+	for ( name, value ) in xml_element.items():
 		html_attributes["data-%s" % ( name )] = value
 
 	catoxml_ns = "{http://namespaces.cato.org/catoxml}"
@@ -17,13 +17,13 @@ def convert_element(e):
 			import urllib
 
 			html_tag = "a"
-			html_attributes["href"] = "#%s" % ( urllib.quote(e.get("value", e.get("entity-id", e.get("entity-parent-id", "")))) )
+			html_attributes["href"] = "#%s" % ( urllib.quote(xml_element.get("value", xml_element.get("entity-id", xml_element.get("entity-parent-id", "")))) )
 		else:
 			html_tag = "span"
 	else:
 		if xml_tag in [ "bill", "resolution", "amendment-doc" ]:
 			html_tag = "article"
-		elif xml_tag in [ "form", "action", "legis-body", "division", "subdivision", "title", "subtitle", "chapter", "subchapter", "part", "subpart", "section", "subsection", "paragraph", "subparagraph", "clause", "subclause", "item", "subitem", "quoted-block", "attestation", "attestation-group", "endorsement", "amendment-form", "amendment-body", "amendment", "amendment-block", "non-statutory-material" ]:
+		elif xml_tag in [ "form", "action", "legis-body", "resolution-body", "division", "subdivision", "title", "subtitle", "chapter", "subchapter", "part", "subpart", "section", "subsection", "paragraph", "subparagraph", "clause", "subclause", "item", "subitem", "quoted-block", "attestation", "attestation-group", "endorsement", "amendment-form", "amendment-body", "amendment", "amendment-block", "non-statutory-material" ]:
 			html_tag = "section"
 		elif xml_tag in [ "distribution-code", "calendar", "congress", "session", "enrolled-dateline", "legis-num", "associated-doc", "current-chamber", "action-date", "action-desc", "action-instruction", "legis-type", "official-title", "official-title-amendment", "text", "attestation-date", "attestor", "proxy", "role", "amendment-instruction", "para", "graphic", "formula" ]:
 			html_tag = "p"
@@ -31,8 +31,8 @@ def convert_element(e):
 			html_tag = "span"
 
 	html_element = etree.Element(html_tag, attrib=html_attributes)
-	html_element.text = e.text #"\n\t"
-	html_element.tail = e.tail #"\n"
+	html_element.text = "" if xml_element.text is None else xml_element.text
+	html_element.tail = "" if xml_element.tail is None else xml_element.tail
 
 	return html_element
 
@@ -40,12 +40,12 @@ def build_html_tree(xml_tree):
 	xml_tree_root = xml_tree.getroot()
 	html_tree = convert_element(xml_tree_root)
 
-	for e in xml_tree_root.getchildren():
+	for xml_element in xml_tree_root.getchildren():
 		# Ignore certain subtrees.
-		if e.tag in [ "metadata" ]:
+		if xml_element.tag in [ "metadata" ]:
 			continue
 
-		html_tree.append(build_html_tree(etree.ElementTree(e)))
+		html_tree.append(build_html_tree(etree.ElementTree(xml_element)))
 
 	return html_tree
 
