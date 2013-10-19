@@ -87,6 +87,27 @@ p.legis-type {
 	font-weight: bold;
 }
 
+span.enum + span.header {
+	margin-left: 0.25em;
+}
+
+section.division > span.enum::before {
+	content: "Division ";
+}
+
+section.division > span.enum::after {
+	content: "\2014";
+}
+
+section.division > span.enum, section.division > span.header {
+	text-transform: uppercase;
+	font-weight: bolder;
+}
+
+section.division > span.enum + span.header {
+	margin-left: 0em;
+}
+
 section.section > span.enum::before {
 	content: "Sec. ";
 }
@@ -102,6 +123,32 @@ section.section[data-section-type="undesignated-section"] > span.enum::before {
 section.section > span.enum, section.section > span.header {
 	font-variant: small-caps;
 	font-weight: bolder;
+}
+
+section.subsection > span.header {
+	font-variant: small-caps;
+}
+
+section.subsection > span.header::after {
+	content: ".\2014";
+}
+
+section.paragraph > span.header {
+	font-variant: small-caps;
+}
+
+section.paragraph > span.header::after {
+	content: ".\2014";
+}
+
+section.appropriations-small {
+	margin: 0.75em auto 0.25em;
+	text-align: center;
+}
+
+section.appropriations-small > span.header {
+	text-transform: lowercase;
+	font-variant: small-caps;
 }
 
 p.text {
