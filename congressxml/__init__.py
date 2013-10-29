@@ -23,9 +23,9 @@ def convert_element(xml_element):
 	else:
 		if xml_tag in [ "bill", "resolution", "amendment-doc" ]:
 			html_tag = "article"
-		elif xml_tag in [ "form", "action", "legis-body", "resolution-body", "division", "subdivision", "title", "subtitle", "chapter", "subchapter", "part", "subpart", "section", "subsection", "paragraph", "subparagraph", "clause", "subclause", "item", "subitem", "quoted-block", "attestation", "attestation-group", "endorsement", "amendment-form", "amendment-body", "amendment", "amendment-block", "non-statutory-material", "appropriations-small" ]:
+		elif xml_tag in [ "form", "action", "legis-body", "resolution-body", "division", "subdivision", "title", "subtitle", "chapter", "subchapter", "part", "subpart", "section", "subsection", "paragraph", "subparagraph", "clause", "subclause", "item", "subitem", "quoted-block", "attestation", "attestation-group", "endorsement", "amendment-form", "amendment-body", "amendment", "amendment-block", "non-statutory-material", "appropriations-small", "toc" ]:
 			html_tag = "section"
-		elif xml_tag in [ "distribution-code", "calendar", "congress", "session", "enrolled-dateline", "legis-num", "associated-doc", "current-chamber", "action-date", "action-desc", "action-instruction", "legis-type", "official-title", "official-title-amendment", "text", "attestation-date", "attestor", "proxy", "role", "amendment-instruction", "para", "graphic", "formula" ]:
+		elif xml_tag in [ "distribution-code", "calendar", "congress", "session", "enrolled-dateline", "legis-num", "associated-doc", "current-chamber", "action-date", "action-desc", "action-instruction", "legis-type", "official-title", "official-title-amendment", "text", "attestation-date", "attestor", "proxy", "role", "amendment-instruction", "para", "graphic", "formula", "toc-entry", "after-quoted-block" ]:
 			html_tag = "p"
 		else:
 			html_tag = "span"

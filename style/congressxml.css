@@ -1,5 +1,4 @@
 :root {
-	font-family: "Latin Modern Roman", "Times New Roman", Times, serif;
 	font-family: serif;
 	font-size: 1.167em;
 }
@@ -15,9 +14,6 @@ section {
 }
 
 p {
-	/*padding: 0em 0.75em;
-	text-indent: 1em;
-	line-height: 1.5;*/
 }
 
 section.form, section.endorsement {
@@ -108,6 +104,24 @@ section.division > span.enum + span.header {
 	margin-left: 0em;
 }
 
+section.title > span.enum::before {
+	content: "Title ";
+}
+
+section.title > span.enum::after {
+	content: "\2014";
+}
+
+section.title > span.enum, section.title > span.header {
+	text-transform: uppercase;
+	font-size: larger;
+	font-weight: bolder;
+}
+
+section.title > span.enum + span.header {
+	margin-left: 0em;
+}
+
 section.section > span.enum::before {
 	content: "Sec. ";
 }
@@ -125,19 +139,19 @@ section.section > span.enum, section.section > span.header {
 	font-weight: bolder;
 }
 
-section.subsection > span.header {
+section.subsection > span.header,
+section.paragraph > span.header,
+section.subparagraph > span.header,
+section.clause > span.header,
+section.subclause > span.header {
 	font-variant: small-caps;
 }
 
-section.subsection > span.header::after {
-	content: ".\2014";
-}
-
-section.paragraph > span.header {
-	font-variant: small-caps;
-}
-
-section.paragraph > span.header::after {
+section.subsection > span.header::after,
+section.paragraph > span.header::after,
+section.subparagraph > span.header::after,
+section.clause > span.header::after,
+section.subclause > span.header::after {
 	content: ".\2014";
 }
 
@@ -151,6 +165,15 @@ section.appropriations-small > span.header {
 	font-variant: small-caps;
 }
 
+section.quoted-block {
+	font-style: italic;
+}
+
+p.after-quoted-block {
+	display: inline;
+	font-style: normal;
+}
+
 p.text {
 	padding: 0em 0.75em;
 	text-indent: 2em;
@@ -160,6 +183,16 @@ p.text {
 
 span.enum + p.text {
 	display: inline;
+}
+
+section.toc {
+	font-size: smaller;
+}
+
+p.toc-entry[data-level="title"] {
+	text-align: center;
+	text-transform: lowercase;
+	font-variant: small-caps;
 }
 
 p.attestor::before {
@@ -184,7 +217,7 @@ p.role::after {
 	content: "."
 }
 
-span.sponsor {
+span.sponsor, span.cosponsor {
 	font-variant: small-caps;
 }
 
