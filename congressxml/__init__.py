@@ -49,9 +49,11 @@ def build_html_tree(xml_tree):
 
 	return html_tree
 
-def convert_xml(xml_file_path, html_file_path):
+def convert_xml(xml_file_path):
 	xml_tree = etree.parse(xml_file_path)
 
-	html_tree = etree.ElementTree(build_html_tree(xml_tree))
+	return etree.ElementTree(build_html_tree(xml_tree))
 
-	html_tree.write(html_file_path)
+# XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
+def write_html(html_tree, html_file_path):
+	return html_tree.write(html_file_path)
