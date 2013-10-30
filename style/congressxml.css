@@ -1,11 +1,7 @@
-:root {
+article {
 	font-family: serif;
 	font-size: 1.167em;
-}
-
-article {
-	border: 0.25em solid black;
-	padding: 1em 10em;
+	padding: 1%;
 }
 
 section {
@@ -14,6 +10,14 @@ section {
 }
 
 p {
+}
+
+a:link, a:visited {
+	text-decoration: none;
+}
+
+a:hover, a:focus, a:active {
+	text-decoration: underline;
 }
 
 section.form, section.endorsement {
