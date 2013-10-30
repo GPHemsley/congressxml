@@ -1,6 +1,10 @@
 from lxml import etree
 
-def convert_element(xml_element):
+def create_link_url(xml_element):
+	import urllib
+	return "#%s" % ( urllib.quote(xml_element.get("value", xml_element.get("entity-id", xml_element.get("entity-parent-id", "")))) )
+
+def convert_element(xml_element, url_fn=create_link_url):
 	xml_tag = xml_element.tag
 
 	html_attributes = { "class": xml_tag }
@@ -17,7 +21,7 @@ def convert_element(xml_element):
 			import urllib
 
 			html_tag = "a"
-			html_attributes["href"] = "#%s" % ( urllib.quote(xml_element.get("value", xml_element.get("entity-id", xml_element.get("entity-parent-id", "")))) )
+			html_attributes["href"] = url_fn(xml_element)
 		else:
 			html_tag = "span"
 	else:
@@ -36,9 +40,9 @@ def convert_element(xml_element):
 
 	return html_element
 
-def build_html_tree(xml_tree):
+def build_html_tree(xml_tree, url_fn=create_link_url):
 	xml_tree_root = xml_tree.getroot()
-	html_tree = convert_element(xml_tree_root)
+	html_tree = convert_element(xml_tree_root, url_fn)
 
 	for xml_element in xml_tree_root.getchildren():
 		# Ignore certain subtrees.
@@ -49,10 +53,10 @@ def build_html_tree(xml_tree):
 
 	return html_tree
 
-def convert_xml(xml_file_path):
+def convert_xml(xml_file_path, url_fn=create_link_url):
 	xml_tree = etree.parse(xml_file_path)
 
-	return etree.ElementTree(build_html_tree(xml_tree))
+	return etree.ElementTree(build_html_tree(xml_tree, url_fn))
 
 # XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
 def write_html(html_tree, html_file_path):
