@@ -17,13 +17,20 @@ def convert_element(xml_element, url_fn=create_link_url):
 		xml_tag = xml_tag[len(catoxml_ns):]
 		html_attributes["class"] = xml_tag
 
+		html_tag = "span"
 		if xml_tag in [ "entity-ref" ]:
-			import urllib
+			href = url_fn(xml_element)
+			if href:
+				html_tag = "a"
+				html_attributes["href"] = href
 
+	elif xml_tag == "external-xref":
+		href = url_fn(xml_element)
+		html_tag = "span"
+		if href:
 			html_tag = "a"
-			html_attributes["href"] = url_fn(xml_element)
-		else:
-			html_tag = "span"
+			html_attributes["href"] = href
+			
 	else:
 		if xml_tag in [ "bill", "resolution", "amendment-doc" ]:
 			html_tag = "article"
