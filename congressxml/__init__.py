@@ -1,8 +1,49 @@
 from lxml import etree
 
 def create_link_url(xml_element):
-	import urllib
-	return "#%s" % ( urllib.quote(xml_element.get("value", xml_element.get("entity-id", xml_element.get("entity-parent-id", "")))) )
+	# This tag is from the office XML file.
+	if xml_element.tag == "external-xref":
+		val = xml_element.get("parsable-cite")
+		if xml_element.get("legal-doc") == "usc":
+			usc, title, sec = val.split("/")
+			return "http://www.law.cornell.edu/uscode/text/" + title + "/" + sec
+		elif xml_element.get("legal-doc") == "usc-chapter": # added by Cato Deepbills
+			return None # not easy to convert to a Cornell LII link
+		elif xml_element.get("legal-doc") == "public-law":
+			pl, congress, num = val.split("/")
+			return "http://www.govtrack.us/search?q=P.L.+%d-%d" % (int(congress), int(num))
+		elif xml_element.get("legal-doc") == "statute-at-large":
+			return None
+		elif xml_element.get("legal-doc") == "bill":
+			return None
+		elif xml_element.get("legal-doc") == "act":
+			return None
+		else:
+			return None
+		# there are some others that we really don't know how to interpret
+
+	# It's a Cato Deepbills entity-ref tag.
+	else:
+		val = xml_element.get("value")
+
+		if xml_element.get("entity-type") == "uscode":
+			ref = val.split("/")
+			if ref[0] == "usc":
+				if len(ref) >= 3: ref[2] = ref[2].split("..")[0]
+				return "http://www.law.cornell.edu/uscode/text/" + ref[1] + ("/" + ref[2] if len(ref) >= 3 else "")
+			elif ref[0] == "usc-chapter":
+				return None # not easy to convert to a Cornell LII link
+			elif ref[0] == "usc-appendix":
+				if len(ref) >= 3: ref[2] = ref[2].split("..")[0]
+				return "http://www.law.cornell.edu/uscode/text/" + ref[1] + "a" + ("/" + ref[2] if len(ref) >= 3 else "")
+		elif xml_element.get("entity-type") == "statute-at-large":
+			sal, volume, page = val.split("/")
+			page = page.split("..")[0] # page may be a range
+			return "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?statute.volume=%d&statute.pageNumber=%s&publication=STATUTE" % (int(volume), int(page))
+		elif xml_element.get("entity-type") == "public-law":
+			pl, congress, num = val.split("/")[0:3]
+			return "http://www.govtrack.us/search?q=P.L.+%d-%d" % (int(congress), int(num))
+
 
 def convert_element(xml_element, url_fn=create_link_url):
 	xml_tag = xml_element.tag
