@@ -54,6 +54,10 @@ section.section[data-indent="down1"] {
 	margin-left: 1em;
 }
 
+p[data-display="no"] {
+	display: none;
+}
+
 p.distribution-code {
 	text-align: right;
 	font-size: 85%;
