@@ -78,7 +78,7 @@ p.legis-num {
 	font-weight: bold;
 }
 
-p.current-chamber::before { /* had p.legis-type::before too, but when these are next to each other the result is not good */
+p.current-chamber::before, p.legis-type::before {
 	display: block;
 	border-top: 1px solid black;
 	width: 50%;
