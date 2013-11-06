@@ -1,16 +1,4 @@
-article {
-	font-family: serif;
-	font-size: 1.167em;
-	padding: 1%;
-}
-
-section {
-	margin-left: 0.5em;
-	padding: 0.25em 0.5em;
-}
-
-p {
-}
+/*** GLOBAL DEFAULTS **/
 
 a:link, a:visited {
 	text-decoration: none;
@@ -20,42 +8,35 @@ a:hover, a:focus, a:active {
 	text-decoration: underline;
 }
 
-section.form, section.endorsement {
-	text-align: center;
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0em;
+	margin-bottom: 0em;
+	font-size: 100%;
+	font-weight: normal;
 }
 
-section.legis-body, section.resolution-body, section.amendment-body {
-	border: dashed black;
-	border-width: 0.1em 0em;
+/*** GLOBAL ELEMENTS **/
+
+article {
+	font-family: serif;
+	font-size: 1.167em;
+	padding: 1%;
 }
 
-section.legis-body > section.section:first-child::before,
-section.resolution-body > section.section:first-child::before,
-section.amendment-body > section.section:first-child::before {
-	display: block;
-	content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
-	font-style: italic;
-	margin-left: 2em;
-	line-height: 4;
-}
+/*** GLOBAL ATTRIBUTES **/
 
-section.section[data-display-inline="yes-display-inline"] {
-	display: inline;
-}
-
-section.legis-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
-section.resolution-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
-section.amendment-body > section.section[data-display-inline="yes-display-inline"]:first-child::before {
-	display: inline;
-	line-height: 1;
-}
-
-section.section[data-indent="down1"] {
-	margin-left: 1em;
-}
-
-p[data-display="no"] {
+[data-display="no"] {
 	display: none;
+}
+
+[data-display-inline="yes-display-inline"] {
+/*	display: inline;*/
+}
+
+/*** LEGISLATIVE DOCUMENT HEADER **/
+
+section.form {
+	text-align: center;
 }
 
 p.distribution-code {
@@ -83,7 +64,7 @@ p.current-chamber::before, p.legis-type::before {
 	border-top: 1px solid black;
 	width: 50%;
 	content: "";
-	margin: -1em auto 1em;
+	margin: -0.5em auto 1em;
 }
 
 p.legis-type {
@@ -91,44 +72,158 @@ p.legis-type {
 	font-weight: bold;
 }
 
-span.enum + span.header {
-	margin-left: 0.25em;
+/*** LEGISLATIVE DOCUMENT BODY **/
+
+section.legis-body, section.resolution-body, section.amendment-body {
+	margin: 0.5em;
+	border: dashed black;
+	border-width: 0.1em 0em;
 }
+
+section.legis-body > section.section:first-child::before,
+section.resolution-body > section.section:first-child::before,
+section.amendment-body > section.section:first-child::before {
+	display: block;
+	content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
+	font-style: italic;
+	margin-left: 2em;
+	line-height: 4;
+}
+
+section.legis-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
+section.resolution-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
+section.amendment-body > section.section[data-display-inline="yes-display-inline"]:first-child::before {
+	display: inline;
+	line-height: 1;
+}
+
+/*** ALL SEGMENTS **/
+
+span.enum + h1.header {
+	display: inline-block;
+}
+
+/*** SEGMENTS ABOVE SECTION **/
+
+section.division > span.enum,
+section.subdivision > span.enum,
+section.title > span.enum,
+section.subtitle > span.enum,
+section.chapter > span.enum,
+section.subchapter > span.enum,
+section.part > span.enum,
+section.subpart > span.enum,
+section.division > h1.header,
+section.subdivision > h1.header,
+section.title > h1.header,
+section.subtitle > h1.header,
+section.chapter > h1.header,
+section.subchapter > h1.header,
+section.part > h1.header,
+section.subpart > h1.header {
+	display: block;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+section.division > span.enum,
+section.subdivision > span.enum,
+section.title > span.enum,
+section.subtitle > span.enum,
+section.chapter > span.enum,
+section.subchapter > span.enum,
+section.part > span.enum,
+section.subpart > span.enum {
+	margin-top: 0.5em;
+	margin-bottom: 1em;
+	font-size: larger;
+	font-weight: bolder;
+}
+
+section.division > h1.header,
+section.subdivision > h1.header,
+section.title > h1.header,
+section.subtitle > h1.header,
+section.chapter > h1.header,
+section.subchapter > h1.header,
+section.part > h1.header,
+section.subpart > h1.header {
+	margin-top: -0.5em;
+	margin-bottom: 1.5em;
+	font-size: 125%;
+}
+
+section.division > span.enum::after,
+section.subdivision > span.enum::after,
+section.title > span.enum::after,
+section.subtitle > span.enum::after,
+section.chapter > span.enum::after,
+section.subchapter > span.enum::after,
+section.part > span.enum::after,
+section.subpart > span.enum::after {
+/*	content: "\2014";*/
+}
+
+section.division > span.enum + h1.header,
+section.subdivision > span.enum + h1.header,
+section.title > span.enum + h1.header,
+section.subtitle > span.enum + h1.header,
+section.chapter > span.enum + h1.header,
+section.subchapter > span.enum + h1.header,
+section.part > span.enum + h1.header,
+section.subpart > span.enum + h1.header {
+/*	margin-left: 0em;*/
+}
+
+/*** DIVISION SEGMENT **/
 
 section.division > span.enum::before {
 	content: "Division ";
 }
 
-section.division > span.enum::after {
-	content: "\2014";
+/*** SUBDIVISION SEGMENT **/
+
+section.subdivision > span.enum::before {
+	content: "Subdivision ";
 }
 
-section.division > span.enum, section.division > span.header {
-	text-transform: uppercase;
-	font-weight: bolder;
-}
-
-section.division > span.enum + span.header {
-	margin-left: 0em;
-}
+/*** TITLE SEGMENT **/
 
 section.title > span.enum::before {
 	content: "Title ";
 }
 
-section.title > span.enum::after {
-	content: "\2014";
+/*** SUBTITLE SEGMENT **/
+
+section.subtitle > span.enum::before {
+	content: "Subtitle ";
 }
 
-section.title > span.enum, section.title > span.header {
-	text-transform: uppercase;
-	font-size: larger;
-	font-weight: bolder;
+/*** CHAPTER SEGMENT **/
+
+section.chapter > span.enum::before {
+	content: "Chapter ";
 }
 
-section.title > span.enum + span.header {
-	margin-left: 0em;
+/*** SUBCHAPTER SEGMENT **/
+
+section.subchapter > span.enum::before {
+	content: "Subchapter ";
 }
+
+/*** PART SEGMENT **/
+
+section.part > span.enum::before {
+	content: "Part ";
+}
+
+/*** SUBPART SEGMENT **/
+
+section.subpart > span.enum::before {
+	content: "Subpart ";
+}
+
+/*** SECTION SEGMENT **/
 
 section.section > span.enum::before {
 	content: "Sec. ";
@@ -142,58 +237,123 @@ section.section[data-section-type="undesignated-section"] > span.enum::before {
 	content: "";
 }
 
-section.section > span.enum, section.section > span.header {
-	font-variant: small-caps;
+section.section > span.enum, section.section > h1.header {
+	font-size: smaller;
 	font-weight: bolder;
-}
-
-section.subsection > span.header,
-section.paragraph > span.header,
-section.subparagraph > span.header,
-section.clause > span.header,
-section.subclause > span.header {
 	font-variant: small-caps;
+	text-transform: uppercase;
 }
 
-section.subsection > span.header::after,
-section.paragraph > span.header::after,
-section.subparagraph > span.header::after,
-section.clause > span.header::after,
-section.subclause > span.header::after {
+section.section > span.enum + h1.header,
+section.section > span.enum + p.text {
+	margin-left: 0.5em;
+}
+
+/* XXX: We should probably handle this generically. */
+section.section[data-indent="down1"] {
+	margin-left: 1em;
+}
+
+/*** SEGMENTS BELOW SECTION **/
+
+section.section > section.subsection,
+section.section > section.paragraph,
+section.section > section.subparagraph,
+section.section > section.clause,
+section.section > section.subclause {
+	margin-left: 4em;
+	margin-right: 4em;
+}
+
+section.subsection,
+section.paragraph,
+section.subparagraph,
+section.clause,
+section.subclause {
+	margin: 1em 2em;
+}
+
+section.subsection > span.enum + h1.header,
+section.paragraph > span.enum + h1.header,
+section.subparagraph > span.enum + h1.header,
+section.clause > span.enum + h1.header,
+section.subclause > span.enum + h1.header,
+section.subsection > span.enum + p.text,
+section.paragraph > span.enum + p.text,
+section.subparagraph > span.enum + p.text,
+section.clause > span.enum + p.text,
+section.subclause > span.enum + p.text {
+	margin-left: 0.5em;
+}
+
+section.subsection > h1.header::after,
+section.paragraph > h1.header::after,
+section.subparagraph > h1.header::after,
+section.clause > h1.header::after,
+section.subclause > h1.header::after {
 	content: ".\2014";
 }
 
-section.appropriations-small {
-	margin: 0.75em auto 0.25em;
-	text-align: center;
+/*** SUBSECTION SEGMENT **/
+
+section.subsection > h1.header {
+	font-variant: small-caps;
+	text-transform: capitalize;
 }
 
-section.appropriations-small > span.header {
-	text-transform: lowercase;
+/*** SEGMENTS BELOW SUBSECTION **/
+
+span.enum + section.paragraph,
+span.enum + section.subparagraph,
+span.enum + section.clause,
+span.enum + section.subclause {
+	margin-left: 1em;
+}
+
+section.paragraph > h1.header,
+section.subparagraph > h1.header,
+section.clause > h1.header,
+section.subclause > h1.header {
 	font-variant: small-caps;
 }
 
-section.quoted-block {
-	font-style: italic;
+/*** XXX: APPROPRIATIONS **/
+
+div.appropriations-major > h1.header,
+div.appropriations-intermediate > h1.header,
+div.appropriations-small > h1.header {
+	display: block;
+	margin: 1em 0em;
+	font-variant: small-caps;
+	text-align: center;
 }
 
-p.after-quoted-block {
-	display: inline;
-	font-style: normal;
+div.appropriations-major > h1.header {
+	margin-top: -0.5em;
+	margin-bottom: 1.5em;
+	font-size: 125%;
+	font-weight: normal;
+	text-transform: uppercase;
 }
 
-p.text {
-	padding: 0em 0.75em;
-	text-indent: 2em;
-	line-height: 1.5;
-	text-align: justify;
+div.appropriations-intermediate > h1.header {
+	font-size: 115%;
+	text-transform: capitalize;
 }
 
-span.enum + p.text {
-	display: inline;
+div.appropriations-small > h1.header {
+	font-size: 105%;
+	text-transform: lowercase;
 }
+
+/*** XXX: STUFF TO BE SORTED **/
 
 section.toc {
+	margin: 1em 2em;
+	border: solid #000080;
+	border-width: 0.1333em 0.2em;
+	background-color: #F3F3FF;
+	padding: 0.5em 0.75em;
 	font-size: smaller;
 }
 
@@ -201,6 +361,50 @@ p.toc-entry[data-level="title"] {
 	text-align: center;
 	text-transform: lowercase;
 	font-variant: small-caps;
+}
+
+p.toc-entry[data-level="section"] {
+	margin: 0em;
+}
+
+section.quoted-block {
+	margin-left: 0.25em;
+	margin-right: 0.25em;
+/*	font-style: italic;*/
+}
+
+section.quoted-block > * {
+	border: solid #808080;
+	border-width: 0.1333em 0.2em;
+	background-color: #F3F3F3;
+	padding: 0.5em 0.75em;
+}
+
+section.quoted-block > section.toc {
+	border: solid #404080;
+	background-color: #F3F3F9;
+}
+
+p.after-quoted-block {
+	margin: 0em -2em;
+	background: inherit;
+	border: inherit;
+	padding: inherit;
+	font-style: normal;
+}
+
+p.text {
+	text-indent: 2em;
+	line-height: 1.25;
+	text-align: justify;
+}
+
+span.enum + p.text {
+	display: inline;
+}
+
+section.endorsement {
+	text-align: center;
 }
 
 p.attestor::before {
@@ -225,7 +429,7 @@ p.role::after {
 	content: "."
 }
 
-span.sponsor, span.cosponsor {
+span.sponsor, span.cosponsor, span.nonsponsor {
 	font-variant: small-caps;
 }
 
@@ -239,6 +443,10 @@ span.quote::after {
 
 span.short-title {
 	color: #C00;
+}
+
+span.effective-date {
+	color: #00C;
 }
 
 a.entity-ref[data-proposed="true"] {
