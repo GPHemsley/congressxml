@@ -56,7 +56,7 @@ def convert_element(xml_element, url_fn=create_link_url):
 	catoxml_ns = "{http://namespaces.cato.org/catoxml}"
 	if xml_tag.startswith(catoxml_ns):
 		xml_tag_name = xml_tag[len(catoxml_ns):]
-		html_attributes["class"][classes.index(xml_tag)] = xml_tag_name
+		html_attributes["class"][html_attributes["class"].index(xml_tag)] = xml_tag_name
 
 		if xml_tag_name in [ "entity-ref" ]:
 			html_tag = "a"
