@@ -327,23 +327,22 @@ def convert_element(xml_element, url_fn=create_link_url):
 
 	return html_element
 
-def build_html_tree(xml_tree, url_fn=create_link_url):
-	xml_tree_root = xml_tree.getroot()
-	html_tree = convert_element(xml_tree_root, url_fn)
+def build_html_tree(node, url_fn=create_link_url):
+	html_tree = convert_element(node, url_fn)
 
-	for xml_element in xml_tree_root.getchildren():
+	for xml_element in node.getchildren():
 		# Ignore certain subtrees.
 		if xml_element.tag in [ "metadata" ]:
 			continue
 
-		html_tree.append(build_html_tree(etree.ElementTree(xml_element)))
+		html_tree.append(build_html_tree(xml_element))
 
 	return html_tree
 
 def convert_xml(xml_file_path, url_fn=create_link_url):
 	xml_tree = etree.parse(xml_file_path, etree.XMLParser(recover=True))
 
-	return etree.ElementTree(build_html_tree(xml_tree, url_fn))
+	return etree.ElementTree(build_html_tree(xml_tree.getroot(), url_fn))
 
 # XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
 def write_html(html_tree, html_file_path):
