@@ -100,7 +100,7 @@ def create_link_url(xml_element):
 
 			citation = citations.deepbills_citation_for(legal_doc, parsable_cite.encode("utf-8"), xml_element.text)
 
-			if citation["type"] == "usc":
+			if citation["type"] == "uscode":
 				link_url = url_for_us_code(citation)
 			elif citation["type"] == "statute-at-large":
 				link_url = url_for_statute_at_large(citation)
