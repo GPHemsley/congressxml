@@ -58,6 +58,9 @@ def url_for_us_code(citation):
 					if fragment != "":
 						subpath += "#%s" % ( fragment )
 
+	# convert en-dashes to hyphens
+	subpath = subpath.replace(u"\u2013", "-")
+
 	return "http://www.law.cornell.edu/uscode/text/%s" % ( subpath )
 
 def url_for_statute_at_large(citation):
@@ -115,7 +118,7 @@ def create_link_url(xml_element):
 			entity_proposed = True if ( xml_element.get("proposed", "false") == "true" ) else False
 
 			if entity_value is not None:
-				citation = citations.deepbills_citation_for(entity_type, entity_value.encode("utf-8"), xml_element.text, entity_proposed)
+				citation = citations.deepbills_citation_for(entity_type, entity_value, xml_element.text, entity_proposed)
 
 				if citation["type"] == "uscode":
 					link_url = url_for_us_code(citation)
@@ -137,7 +140,7 @@ def create_link_url(xml_element):
 			if legal_doc == "usc":
 				legal_doc = "uscode"
 
-			citation = citations.deepbills_citation_for(legal_doc, parsable_cite.encode("utf-8"), xml_element.text)
+			citation = citations.deepbills_citation_for(legal_doc, parsable_cite, xml_element.text)
 
 #			if citation["type"] == "usc":
 			if citation["type"] == "uscode":
