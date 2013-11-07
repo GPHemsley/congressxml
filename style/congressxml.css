@@ -8,6 +8,17 @@ a:hover, a:focus, a:active {
 	text-decoration: underline;
 }
 
+a:not([href]) {
+	color: #990033;
+}
+
+a:not([href]):hover, a:not([href]):focus, a:not([href]):active {
+	cursor: not-allowed;
+	-webkit-text-decoration-style: dashed;
+	-moz-text-decoration-style: dashed;
+	text-decoration-style: dashed;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0em;
 	margin-bottom: 0em;
@@ -33,6 +44,9 @@ article {
 /*	display: inline;*/
 }
 
+[data-proposed="true"] {
+	font-style: italic;
+}
 /*** LEGISLATIVE DOCUMENT HEADER **/
 
 section.form {
@@ -447,8 +461,4 @@ span.short-title {
 
 span.effective-date {
 	color: #00C;
-}
-
-a.entity-ref[data-proposed="true"] {
-	font-style: italic;
 }

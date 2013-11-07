@@ -3,6 +3,18 @@ from lxml import etree
 catoxml_ns = "{http://namespaces.cato.org/catoxml}"
 
 def url_for_us_code(citation):
+	def is_range(segment):
+		# XXX: This is a quick-and-dirty range finder.
+		return (".." in segment)
+
+	def get_range_start(segment):
+		return segment[:segment.index("..")]
+
+	# Citations of proposed documents won't follow the same URL format.
+	if citation["proposed"]:
+		# XXX: We should probably support same-page URLs for these.
+		return None
+
 	if "title" not in citation:
 		return None
 
@@ -19,24 +31,41 @@ def url_for_us_code(citation):
 				subpath += "/subchapter-%s" % ( citation["subchapter"] )
 	else:
 		if "section" in citation:
-			# XXX: This is a quick-and-dirty range finder.
-			if ".." in citation["section"]:
-				subpath += "/%s" % ( citation["section"][:citation["section"].index("..")] )
+			if is_range(citation["section"]):
+				subpath += "/%s" % ( get_range_start(citation["section"]) )
 			else:
 				subpath += "/%s" % ( citation["section"] )
 
 				if "subsection" in citation:
-					subpath += "#%s" % ( citation["subsection"] )
+					if is_range(citation["subsection"]):
+						fragment = get_range_start(citation["subsection"])
+					else:
+						fragment = citation["subsection"]
 
-					for segment in [ "paragraph", "subparagraph", "clause", "subclause", "item", "subitem" ]:
-						if segment in citation:
-							subpath += "_%s" % ( citation[segment] )
-						else:
-							break
+						for segment in [ "paragraph", "subparagraph", "clause", "subclause", "item", "subitem" ]:
+							if segment in citation:
+								# Sometimes a segment is empty, so we just skip it.
+								if citation[segment] != "":
+									if is_range(citation[segment]):
+										segment_range_start = get_range_start(citation[segment])
+										fragment += segment_range_start if fragment == "" else "_%s" % ( segment_range_start )
+										break
+									else:
+										fragment += citation[segment] if fragment == "" else "_%s" % ( citation[segment] )
+							else:
+								break
+
+					if fragment != "":
+						subpath += "#%s" % ( fragment )
 
 	return "http://www.law.cornell.edu/uscode/text/%s" % ( subpath )
 
 def url_for_statute_at_large(citation):
+	# Citations of proposed documents won't follow the same URL format.
+	if citation["proposed"]:
+		# XXX: We should probably support same-page URLs for these.
+		return None
+
 	try:
 		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), int(citation["page"]) )
 	except KeyError:
@@ -45,6 +74,11 @@ def url_for_statute_at_large(citation):
 	return url
 
 def url_for_public_law(citation):
+	# Citations of proposed documents won't follow the same URL format.
+	if citation["proposed"]:
+		# XXX: We should probably support same-page URLs for these.
+		return None
+
 	try:
 		url = "https://www.govtrack.us/search?q=P.L.+%d-%d" % ( int(citation["congress"]), int(citation["law"]) )
 	except KeyError:
@@ -53,6 +87,11 @@ def url_for_public_law(citation):
 	return url
 
 def url_for_act(citation):
+	# Citations of proposed documents won't follow the same URL format.
+	if citation["proposed"]:
+		# XXX: We should probably support same-page URLs for these.
+		return None
+
 	try:
 		url = "https://www.govtrack.us/congress/bills/browse?congress=__ALL__&sort=relevance&text=%s" % ( citation["act"] )
 	except KeyError:
@@ -73,7 +112,7 @@ def create_link_url(xml_element):
 		if xml_tag_name in [ "entity-ref" ]:
 			entity_type = xml_element.get("entity-type")
 			entity_value = xml_element.get("value")
-			entity_proposed = True if ( xml_element.get("value", "false") == "true" ) else False
+			entity_proposed = True if ( xml_element.get("proposed", "false") == "true" ) else False
 
 			if entity_value is not None:
 				citation = citations.deepbills_citation_for(entity_type, entity_value.encode("utf-8"), xml_element.text, entity_proposed)
@@ -100,6 +139,7 @@ def create_link_url(xml_element):
 
 			citation = citations.deepbills_citation_for(legal_doc, parsable_cite.encode("utf-8"), xml_element.text)
 
+#			if citation["type"] == "usc":
 			if citation["type"] == "uscode":
 				link_url = url_for_us_code(citation)
 			elif citation["type"] == "statute-at-large":
