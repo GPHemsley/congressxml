@@ -174,6 +174,20 @@ def create_link_url(xml_element):
 
 	return link_url
 
+def can_be_link(xml_element):
+	xml_tag = xml_element.tag
+
+	if xml_tag.startswith(catoxml_ns):
+		pass
+	else:
+		# Favor CatoXML references, because they tend to be more specific.
+		# XXX: This is probably enough, but we might want to check for other nested link elements.
+		entity_ref_tag_name = "{%s}entity-ref" % ( catoxml_ns )
+		if xml_element.iterdescendants(entity_ref_tag_name) or xml_element.iterancestors(entity_ref_tag_name):
+			return False
+
+	return True
+
 def convert_element(xml_element, url_fn=create_link_url):
 	xml_tag = xml_element.tag
 
@@ -187,11 +201,15 @@ def convert_element(xml_element, url_fn=create_link_url):
 		html_attributes["class"][html_attributes["class"].index(xml_tag)] = xml_tag_name
 
 		if xml_tag_name in [ "entity-ref" ]:
-			html_tag = "a"
+			# We aren't allowed to have nested links.
+			if can_be_link(xml_element):
+				html_tag = "a"
 
-			href = url_fn(xml_element)
-			if href:
-				html_attributes["href"] = href
+				href = url_fn(xml_element)
+				if href:
+					html_attributes["href"] = href
+			else:
+				html_tag = "span"
 		else:
 			html_tag = "span"
 	else:
@@ -229,17 +247,21 @@ def convert_element(xml_element, url_fn=create_link_url):
 
 		# Text-level semantics
 		elif xml_tag in [ "external-xref", "internal-xref", "footnone-ref" ]:
-			html_tag = "a"
+			# We aren't allowed to have nested links.
+			if can_be_link(xml_element):
+				html_tag = "a"
 
-			href = url_fn(xml_element)
-			if href:
-				html_attributes["href"] = href
+				href = url_fn(xml_element)
+				if href:
+					html_attributes["href"] = href
 
-			if xml_tag in [ "external-xref" ]:
-				if "rel" not in html_attributes:
-					html_attributes["rel"] = []
+				if xml_tag in [ "external-xref" ]:
+					if "rel" not in html_attributes:
+						html_attributes["rel"] = []
 
-				html_attributes["rel"].append("external")
+					html_attributes["rel"].append("external")
+			else:
+				html_tag = "span"
 		elif xml_tag in [ "quote" ]:
 			html_tag = "q"
 		elif xml_tag in [ "term" ]:
