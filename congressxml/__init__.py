@@ -331,8 +331,8 @@ def build_html_tree(node, url_fn=create_link_url):
 	html_tree = convert_element(node, url_fn)
 
 	for xml_element in node.getchildren():
-		# Ignore certain subtrees.
-		if xml_element.tag in [ "metadata" ]:
+		# Ignore certain subtrees and processing instructions
+		if xml_element.tag in [ "metadata" ] or not isinstance(xml_element.tag, basestring):
 			continue
 
 		html_tree.append(build_html_tree(xml_element))
