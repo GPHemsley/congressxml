@@ -341,7 +341,7 @@ def build_html_tree(xml_tree, url_fn=create_link_url):
 	return html_tree
 
 def convert_xml(xml_file_path, url_fn=create_link_url):
-	xml_tree = etree.parse(xml_file_path)
+	xml_tree = etree.parse(xml_file_path, etree.XMLParser(recover=True))
 
 	return etree.ElementTree(build_html_tree(xml_tree, url_fn))
 
