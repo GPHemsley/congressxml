@@ -1,49 +1,138 @@
 from lxml import etree
 
-def create_link_url(xml_element):
-	# This tag is from the office XML file.
-	if xml_element.tag == "external-xref":
-		val = xml_element.get("parsable-cite")
-		if xml_element.get("legal-doc") == "usc":
-			usc, title, sec = val.split("/")
-			return "http://www.law.cornell.edu/uscode/text/" + title + "/" + sec
-		elif xml_element.get("legal-doc") == "usc-chapter": # added by Cato Deepbills
-			return None # not easy to convert to a Cornell LII link
-		elif xml_element.get("legal-doc") == "public-law":
-			pl, congress, num = val.split("/")
-			return "http://www.govtrack.us/search?q=P.L.+%d-%d" % (int(congress), int(num))
-		elif xml_element.get("legal-doc") == "statute-at-large":
-			return None
-		elif xml_element.get("legal-doc") == "bill":
-			return None
-		elif xml_element.get("legal-doc") == "act":
-			return None
-		else:
-			return None
-		# there are some others that we really don't know how to interpret
+catoxml_ns = "{http://namespaces.cato.org/catoxml}"
 
-	# It's a Cato Deepbills entity-ref tag.
+def url_for_us_code(citation):
+	if "title" not in citation:
+		return None
+
+	subpath = citation["title"]
+
+	if citation["subtype"] == "usc-appendix":
+		subpath += "a"
+
+	if citation["subtype"] == "usc-chapter":
+		if "chapter" in citation:
+			subpath += "/chapter-%s" % ( citation["chapter"] )
+
+			if "subchapter" in citation:
+				subpath += "/subchapter-%s" % ( citation["subchapter"] )
 	else:
-		val = xml_element.get("value")
+		if "section" in citation:
+			# XXX: This is a quick-and-dirty range finder.
+			if ".." in citation["section"]:
+				subpath += "/%s" % ( citation["section"][:citation["section"].index("..")] )
+			else:
+				subpath += "/%s" % ( citation["section"] )
 
-		if xml_element.get("entity-type") == "uscode":
-			ref = val.split("/")
-			if ref[0] == "usc":
-				if len(ref) >= 3: ref[2] = ref[2].split("..")[0]
-				return "http://www.law.cornell.edu/uscode/text/" + ref[1] + ("/" + ref[2] if len(ref) >= 3 else "")
-			elif ref[0] == "usc-chapter":
-				return None # not easy to convert to a Cornell LII link
-			elif ref[0] == "usc-appendix":
-				if len(ref) >= 3: ref[2] = ref[2].split("..")[0]
-				return "http://www.law.cornell.edu/uscode/text/" + ref[1] + "a" + ("/" + ref[2] if len(ref) >= 3 else "")
-		elif xml_element.get("entity-type") == "statute-at-large":
-			sal, volume, page = val.split("/")
-			page = page.split("..")[0] # page may be a range
-			return "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?statute.volume=%d&statute.pageNumber=%s&publication=STATUTE" % (int(volume), int(page))
-		elif xml_element.get("entity-type") == "public-law":
-			pl, congress, num = val.split("/")[0:3]
-			return "http://www.govtrack.us/search?q=P.L.+%d-%d" % (int(congress), int(num))
+				if "subsection" in citation:
+					subpath += "#%s" % ( citation["subsection"] )
 
+					for segment in [ "paragraph", "subparagraph", "clause", "subclause", "item", "subitem" ]:
+						if segment in citation:
+							subpath += "_%s" % ( citation[segment] )
+						else:
+							break
+
+	return "http://www.law.cornell.edu/uscode/text/%s" % ( subpath )
+
+def url_for_statute_at_large(citation):
+	try:
+		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), int(citation["page"]) )
+	except KeyError:
+		url = None
+
+	return url
+
+def url_for_public_law(citation):
+	try:
+		url = "https://www.govtrack.us/search?q=P.L.+%d-%d" % ( int(citation["congress"]), int(citation["law"]) )
+	except KeyError:
+		url = None
+
+	return url
+
+def url_for_act(citation):
+	try:
+		url = "https://www.govtrack.us/congress/bills/browse?congress=__ALL__&sort=relevance&text=%s" % ( citation["act"] )
+	except KeyError:
+		url = None
+
+	return url
+
+def create_link_url(xml_element):
+	import citations
+
+	link_url = None
+
+	xml_tag = xml_element.tag
+
+	if xml_tag.startswith(catoxml_ns):
+		xml_tag_name = xml_tag[len(catoxml_ns):]
+
+		if xml_tag_name in [ "entity-ref" ]:
+			entity_type = xml_element.get("entity-type")
+			entity_value = xml_element.get("value")
+			entity_proposed = True if ( xml_element.get("value", "false") == "true" ) else False
+
+			if entity_value is not None:
+				citation = citations.deepbills_citation_for(entity_type, entity_value.encode("utf-8"), xml_element.text, entity_proposed)
+
+				if citation["type"] == "uscode":
+					link_url = url_for_us_code(citation)
+				elif citation["type"] == "statute-at-large":
+					link_url = url_for_statute_at_large(citation)
+				elif citation["type"] == "public-law":
+					link_url = url_for_public_law(citation)
+				elif citation["type"] == "act":
+					link_url = url_for_act(citation)
+				else:
+					# Unexpected citation type.
+					pass
+	else:
+		if xml_tag == "external-xref":
+			legal_doc = xml_element.get("legal-doc")
+			parsable_cite = xml_element.get("parsable-cite")
+
+			# XXX: Workaround for citations.deepbills_citation_for().
+			if legal_doc == "usc":
+				legal_doc = "uscode"
+
+			citation = citations.deepbills_citation_for(legal_doc, parsable_cite.encode("utf-8"), xml_element.text)
+
+			if citation["type"] == "usc":
+				link_url = url_for_us_code(citation)
+			elif citation["type"] == "statute-at-large":
+				link_url = url_for_statute_at_large(citation)
+			elif citation["type"] == "public-law":
+				link_url = url_for_public_law(citation)
+			elif citation["type"] == "act":
+				link_url = url_for_act(citation)
+			elif citation["type"] == "executive-order":
+				pass
+			elif citation["type"] == "regulation":
+				pass
+			elif citation["type"] == "bill":
+				pass
+			elif citation["type"] == "senate-rule":
+				pass
+			elif citation["type"] == "treaty-ust":
+				pass
+			elif citation["type"] == "treaty-tias":
+				pass
+			else:
+				# Unexpected document type
+				pass
+		elif xml_tag == "internal-xref":
+			idref = xml_element.get("idref")
+			legis_path = xml_element.get("legis-path")
+		elif xml_tag == "footnote-ref":
+			idref = xml_element.get("idref")
+		else:
+			# Unexpected XML tag.
+			pass
+
+	return link_url
 
 def convert_element(xml_element, url_fn=create_link_url):
 	xml_tag = xml_element.tag
@@ -53,7 +142,6 @@ def convert_element(xml_element, url_fn=create_link_url):
 	for ( name, value ) in xml_element.items():
 		html_attributes["data-%s" % ( name )] = value
 
-	catoxml_ns = "{http://namespaces.cato.org/catoxml}"
 	if xml_tag.startswith(catoxml_ns):
 		xml_tag_name = xml_tag[len(catoxml_ns):]
 		html_attributes["class"][html_attributes["class"].index(xml_tag)] = xml_tag_name
