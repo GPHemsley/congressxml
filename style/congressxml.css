@@ -30,8 +30,14 @@ h1, h2, h3, h4, h5, h6 {
 
 article {
 	font-family: serif;
-	font-size: 1.167em;
+	font-size: 18.6667px;
+	font-size: 1.167rem;
 	padding: 1%;
+}
+
+article p {
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 /*** GLOBAL ATTRIBUTES **/
@@ -42,6 +48,58 @@ article {
 
 [data-display-inline="yes-display-inline"] {
 /*	display: inline;*/
+}
+
+[data-reported-display-style="boldface-roman"] > *,
+[data-reported-display-style="parentheses-boldface-roman"] > *,
+[data-reported-display-style="brackets-boldface-italic"] > * {
+	font-style: normal;
+}
+
+[data-changed="added"] > *,
+[data-reported-display-style="italic"] > *,
+[data-reported-display-style="boldface-italic"] > *,
+[data-reported-display-style="parentheses-boldface-italic"] > *,
+[data-reported-display-style="brackets-boldface-italic"] > * {
+	font-style: italic;
+}
+
+[data-reported-display-style="bold-brackets"] > p::before,
+[data-reported-display-style="bold-brackets"] > p::after,
+[data-reported-display-style="boldface-roman"] > *,
+[data-reported-display-style="boldface-italic"] > *,
+[data-reported-display-style="parentheses-boldface-roman"] > *,
+[data-reported-display-style="parentheses-boldface-italic"] > *,
+[data-reported-display-style="brackets-boldface-roman"] > *,
+[data-reported-display-style="brackets-boldface-italic"] > * {
+	font-weight: bolder;
+}
+
+[data-reported-display-style="parentheses-boldface-roman"] > p::before,
+[data-reported-display-style="parentheses-boldface-italic"] > p::before {
+	content: "(";
+}
+
+[data-reported-display-style="parentheses-boldface-roman"] > p::after,
+[data-reported-display-style="parentheses-boldface-italic"] > p::after {
+	content: ")";
+}
+
+[data-reported-display-style="bold-brackets"] > p,
+[data-reported-display-style="brackets-boldface-roman"] > p::before,
+[data-reported-display-style="brackets-boldface-italic"] > p::before {
+	content: "[";
+}
+
+[data-reported-display-style="bold-brackets"] > p,
+[data-reported-display-style="brackets-boldface-roman"] > p::after,
+[data-reported-display-style="brackets-boldface-italic"] > p::after {
+	content: "]";
+}
+
+[data-changed="deleted"] > *,
+[data-reported-display-style="strikethrough"] > * {
+	text-decoration: line-through;
 }
 
 [data-proposed="true"] {
@@ -61,17 +119,21 @@ p.distribution-code {
 
 p.calendar {
 	text-align: right;
-	font-weight: bold;
-	font-size: 175%;
+	font-weight: bolder;
+	font-size: 150%;
 }
 
-p.congress, p.session, p.action-date {
+p.congress, p.session {
 	font-variant: small-caps;
 }
 
 p.legis-num {
 	font-size: 250%;
-	font-weight: bold;
+	font-weight: bolder;
+}
+
+p.associated-doc {
+	font-weight: bolder;
 }
 
 p.current-chamber::before, p.legis-type::before {
@@ -87,22 +149,52 @@ p.legis-type {
 	font-weight: bold;
 }
 
+p.current-chamber {
+	font-size: 105%;
+}
+
+p.action-date {
+	font-variant: small-caps;
+}
+
+p.action-desc {
+	font-size: 90%;
+}
+
+span.sponsor, span.cosponsor, span.nonsponsor {
+	font-variant: small-caps;
+}
+
+p.action-instruction::before {
+	content: "[";
+}
+
+p.action-instruction {
+	font-size: 75%;
+}
+
+p.action-instruction::after {
+	content: "]";
+}
+
 /*** LEGISLATIVE DOCUMENT BODY **/
 
 section.legis-body, section.resolution-body, section.amendment-body {
 	margin: 0.5em;
 	border: dashed black;
 	border-width: 0.1em 0em;
+	padding: 1em 0em 0.25em;
 }
 
-section.legis-body > section.section:first-child::before,
-section.resolution-body > section.section:first-child::before,
-section.amendment-body > section.section:first-child::before {
+section.legis-body:not([data-display-enacting-clause="no-display-enacting-clause"]) > section.section:first-child::before,
+section.resolution-body:not([data-display-enacting-clause="no-display-enacting-clause"]) > section.section:first-child::before,
+section.amendment-body:not([data-display-enacting-clause="no-display-enacting-clause"]) > section.section:first-child::before {
 	display: block;
-	content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
+	margin: 0em 0.5em 0.75em;
 	font-style: italic;
-	margin-left: 2em;
-	line-height: 4;
+	line-height: 1.4;
+	text-decoration: none !important;
+	content: "Be it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,";
 }
 
 section.legis-body > section.section[data-display-inline="yes-display-inline"]:first-child::before,
@@ -115,7 +207,7 @@ section.amendment-body > section.section[data-display-inline="yes-display-inline
 /*** ALL SEGMENTS **/
 
 span.enum + h1.header {
-	display: inline-block;
+	display: inline;
 }
 
 /*** SEGMENTS ABOVE SECTION **/
@@ -271,13 +363,12 @@ section.section[data-indent="down1"] {
 
 /*** SEGMENTS BELOW SECTION **/
 
-section.section > section.subsection,
-section.section > section.paragraph,
-section.section > section.subparagraph,
-section.section > section.clause,
-section.section > section.subclause {
-	margin-left: 4em;
-	margin-right: 4em;
+section.section > p.text ~ section.subsection,
+section.section > p.text ~ section.paragraph,
+section.section > p.text ~ section.subparagraph,
+section.section > p.text ~ section.clause,
+section.section > p.text ~ section.subclause {
+	margin-left: 2em;
 }
 
 section.subsection,
@@ -285,7 +376,8 @@ section.paragraph,
 section.subparagraph,
 section.clause,
 section.subclause {
-	margin: 1em 2em;
+	margin: 1em;
+	text-align: justify;
 }
 
 section.subsection > span.enum + h1.header,
@@ -332,6 +424,14 @@ section.subclause > h1.header {
 	font-variant: small-caps;
 }
 
+/*** SEGMENTS BELOW PARAGRAPH **/
+
+section.subparagraph,
+section.clause,
+section.subclause {
+	margin-left: 1.25em;
+}
+
 /*** XXX: APPROPRIATIONS **/
 
 div.appropriations-major > h1.header,
@@ -370,6 +470,7 @@ section.toc {
 	background-color: #F3F3FF;
 	padding: 0.5em 0.75em;
 	font-size: smaller;
+	text-align: left;
 }
 
 p.toc-entry[data-level="title"] {
@@ -384,8 +485,8 @@ p.toc-entry[data-level="section"] {
 
 section.quoted-block {
 	margin-left: 0.25em;
-	margin-right: 0.25em;
-/*	font-style: italic;*/
+/*	margin: 0.5em 0.25em;
+	font-style: italic;*/
 }
 
 section.quoted-block > * {
@@ -396,27 +497,51 @@ section.quoted-block > * {
 }
 
 section.quoted-block > section.toc {
-	border: solid #404080;
+	border-color: #404080;
 	background-color: #F3F3F9;
 }
 
+section.quoted-block > section.section {
+	margin: 1em;
+}
+
 p.after-quoted-block {
-	margin: 0em -2em;
-	background: inherit;
 	border: inherit;
+	background: inherit;
 	padding: inherit;
 	font-style: normal;
 }
 
-p.text {
-	text-indent: 2em;
+p.text, p.quoted-block-continuation-text {
 	line-height: 1.25;
 	text-align: justify;
+}
+
+p.text {
+	text-indent: 2em;
 }
 
 span.enum + p.text {
 	display: inline;
 }
+
+q.quote::before {
+	content: open-quote;
+}
+
+q.quote::after {
+	content: close-quote;
+}
+
+span.short-title {
+	color: #C00;
+}
+
+span.effective-date {
+	color: #00C;
+}
+
+/*** LEGISLATIVE DOCUMENT FOOTER **/
 
 section.endorsement {
 	text-align: center;
@@ -442,24 +567,4 @@ p.role {
 
 p.role::after {
 	content: "."
-}
-
-span.sponsor, span.cosponsor, span.nonsponsor {
-	font-variant: small-caps;
-}
-
-span.quote::before {
-	content: open-quote;
-}
-
-span.quote::after {
-	content: close-quote;
-}
-
-span.short-title {
-	color: #C00;
-}
-
-span.effective-date {
-	color: #00C;
 }
