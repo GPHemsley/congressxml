@@ -25,7 +25,7 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: normal;
 }
 
-/*** GLOBAL ELEMENTS **/
+/*** GLOBAL ELEMENTS AND ATTRIBUTES **/
 
 article {
 	font-family: serif;
@@ -39,7 +39,17 @@ article p {
 	margin-bottom: 1em;
 }
 
-/*** GLOBAL ATTRIBUTES **/
+dfn::before {
+	content: open-quote;
+}
+
+dfn {
+	font-style: inherit;
+}
+
+dfn::after {
+	content: close-quote;
+}
 
 [data-display="no"] {
 	display: none;
@@ -51,10 +61,11 @@ article p {
 
 [data-reported-display-style="boldface-roman"] > *,
 [data-reported-display-style="parentheses-boldface-roman"] > *,
-[data-reported-display-style="brackets-boldface-italic"] > * {
+[data-reported-display-style="brackets-boldface-roman"] > * {
 	font-style: normal;
 }
 
+ins,
 [data-changed="added"] > *,
 [data-reported-display-style="italic"] > *,
 [data-reported-display-style="boldface-italic"] > *,
@@ -96,6 +107,7 @@ article p {
 	content: "]";
 }
 
+del,
 [data-changed="deleted"] > *,
 [data-reported-display-style="strikethrough"] > * {
 	text-decoration: line-through;
