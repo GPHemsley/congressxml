@@ -20,8 +20,7 @@ a:not([href]):hover, a:not([href]):focus, a:not([href]):active {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	margin-top: 0em;
-	margin-bottom: 0em;
+	margin: 0em;
 	font-size: 100%;
 	font-weight: normal;
 }
@@ -353,7 +352,7 @@ section.section > span.enum, section.section > h1.header {
 
 section.section > span.enum + h1.header,
 section.section > span.enum + p.text {
-	margin-left: 0.5em;
+	margin-left: 0.25em;
 }
 
 /* XXX: We should probably handle this generically. */
@@ -368,7 +367,7 @@ section.section > p.text ~ section.paragraph,
 section.section > p.text ~ section.subparagraph,
 section.section > p.text ~ section.clause,
 section.section > p.text ~ section.subclause {
-	margin-left: 2em;
+	margin-left: 1.5em;
 }
 
 section.subsection,
@@ -376,7 +375,7 @@ section.paragraph,
 section.subparagraph,
 section.clause,
 section.subclause {
-	margin: 1em;
+	margin: 1em 0.5em 1em 1.5em;
 	text-align: justify;
 }
 
@@ -384,13 +383,9 @@ section.subsection > span.enum + h1.header,
 section.paragraph > span.enum + h1.header,
 section.subparagraph > span.enum + h1.header,
 section.clause > span.enum + h1.header,
-section.subclause > span.enum + h1.header,
-section.subsection > span.enum + p.text,
-section.paragraph > span.enum + p.text,
-section.subparagraph > span.enum + p.text,
-section.clause > span.enum + p.text,
-section.subclause > span.enum + p.text {
-	margin-left: 0.5em;
+section.subclause > span.enum + h1.header {
+	margin-left: 0.125em;
+	text-align: left;
 }
 
 section.subsection > h1.header::after,
@@ -399,6 +394,14 @@ section.subparagraph > h1.header::after,
 section.clause > h1.header::after,
 section.subclause > h1.header::after {
 	content: ".\2014";
+}
+
+section.subsection > span.enum + p.text,
+section.paragraph > span.enum + p.text,
+section.subparagraph > span.enum + p.text,
+section.clause > span.enum + p.text,
+section.subclause > span.enum + p.text {
+	margin-left: 0.25em;
 }
 
 /*** SUBSECTION SEGMENT **/
@@ -429,7 +432,7 @@ section.subclause > h1.header {
 section.subparagraph,
 section.clause,
 section.subclause {
-	margin-left: 1.25em;
+/*	margin-left: 1.25em;*/
 }
 
 /*** XXX: APPROPRIATIONS **/
@@ -518,7 +521,7 @@ p.text, p.quoted-block-continuation-text {
 }
 
 p.text {
-	text-indent: 2em;
+	text-indent: 1.5em;
 }
 
 span.enum + p.text {
