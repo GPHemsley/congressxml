@@ -9,11 +9,9 @@ a:hover, a:focus, a:active {
 }
 
 a:not([href]) {
-	color: #990033;
-}
-
-a:not([href]):hover, a:not([href]):focus, a:not([href]):active {
-	cursor: not-allowed;
+	-webkit-text-decoration-line: underline;
+	-moz-text-decoration-line: underline;
+	text-decoration-line: underline;
 	-webkit-text-decoration-style: dashed;
 	-moz-text-decoration-style: dashed;
 	text-decoration-style: dashed;
