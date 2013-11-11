@@ -88,6 +88,9 @@ def url_for_public_law(citation):
 		url = "https://www.govtrack.us/search?q=P.L.+%d-%d" % ( int(citation["congress"]), int(citation["law"]) )
 	except KeyError:
 		url = None
+	except ValueError:
+		# either the congress or the law number was not an integer (maybe blank), not sure why it occurrs but we'll just silently ignore
+		url = None
 
 	return url
 
