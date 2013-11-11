@@ -70,7 +70,9 @@ def url_for_statute_at_large(citation):
 		return None
 
 	try:
-		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), int(citation["page"]) )
+		# An en-dash indicates a page range, but link to just the first page in the range.
+		page = citation["page"].split(u"\u2013")[0]
+		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), page)
 	except KeyError:
 		url = None
 
