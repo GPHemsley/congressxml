@@ -58,7 +58,7 @@ def url_for_us_code(citation):
 					if fragment != "":
 						subpath += "#%s" % ( fragment )
 
-	# convert en-dashes to hyphens
+	# Convert en-dashes to hyphens.
 	subpath = subpath.replace(u"\u2013", "-")
 
 	return "http://www.law.cornell.edu/uscode/text/%s" % ( subpath )
@@ -89,7 +89,8 @@ def url_for_public_law(citation):
 	except KeyError:
 		url = None
 	except ValueError:
-		# either the congress or the law number was not an integer (maybe blank), not sure why it occurrs but we'll just silently ignore
+		# Silently ignore the case where either the Congress or the law number was not an integer.
+		# XXX: This is probably an error in the data. We should investigate whether there's a better way to handle this.
 		url = None
 
 	return url
