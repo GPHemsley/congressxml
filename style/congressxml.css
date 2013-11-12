@@ -8,14 +8,14 @@ a:hover, a:focus, a:active {
 	text-decoration: underline;
 }
 
-a:not([href]) {
+/*a:not([href]) {
 	-webkit-text-decoration-line: underline;
 	-moz-text-decoration-line: underline;
 	text-decoration-line: underline;
 	-webkit-text-decoration-style: dashed;
 	-moz-text-decoration-style: dashed;
 	text-decoration-style: dashed;
-}
+}*/
 
 h1, h2, h3, h4, h5, h6 {
 	margin: 0em;

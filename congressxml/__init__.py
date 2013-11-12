@@ -58,6 +58,9 @@ def url_for_us_code(citation):
 					if fragment != "":
 						subpath += "#%s" % ( fragment )
 
+	# Convert en-dashes to hyphens.
+	subpath = subpath.replace(u"\u2013", "-")
+
 	return "http://www.law.cornell.edu/uscode/text/%s" % ( subpath )
 
 def url_for_statute_at_large(citation):
@@ -67,7 +70,9 @@ def url_for_statute_at_large(citation):
 		return None
 
 	try:
-		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), int(citation["page"]) )
+		# An en-dash indicates a page range, but link to just the first page in the range.
+		page = citation["page"].split(u"\u2013")[0]
+		url = "http://www.gpo.gov/fdsys/search/citation2.result.STATUTE.action?publication=STATUTE&statute.volume=%d&statute.pageNumber=%s" % ( int(citation["volume"]), page)
 	except KeyError:
 		url = None
 
@@ -82,6 +87,10 @@ def url_for_public_law(citation):
 	try:
 		url = "https://www.govtrack.us/search?q=P.L.+%d-%d" % ( int(citation["congress"]), int(citation["law"]) )
 	except KeyError:
+		url = None
+	except ValueError:
+		# Silently ignore the case where either the Congress or the law number was not an integer.
+		# XXX: This is probably an error in the data. We should investigate whether there's a better way to handle this.
 		url = None
 
 	return url
@@ -115,7 +124,7 @@ def create_link_url(xml_element):
 			entity_proposed = True if ( xml_element.get("proposed", "false") == "true" ) else False
 
 			if entity_value is not None:
-				citation = citations.deepbills_citation_for(entity_type, entity_value.encode("utf-8"), xml_element.text, entity_proposed)
+				citation = citations.deepbills_citation_for(entity_type, entity_value, xml_element.text, entity_proposed)
 
 				if citation["type"] == "uscode":
 					link_url = url_for_us_code(citation)
@@ -137,7 +146,7 @@ def create_link_url(xml_element):
 			if legal_doc == "usc":
 				legal_doc = "uscode"
 
-			citation = citations.deepbills_citation_for(legal_doc, parsable_cite.encode("utf-8"), xml_element.text)
+			citation = citations.deepbills_citation_for(legal_doc, parsable_cite, xml_element.text)
 
 #			if citation["type"] == "usc":
 			if citation["type"] == "uscode":
@@ -327,23 +336,22 @@ def convert_element(xml_element, url_fn=create_link_url):
 
 	return html_element
 
-def build_html_tree(xml_tree, url_fn=create_link_url):
-	xml_tree_root = xml_tree.getroot()
-	html_tree = convert_element(xml_tree_root, url_fn)
+def build_html_tree(node, url_fn=create_link_url):
+	html_tree = convert_element(node, url_fn)
 
-	for xml_element in xml_tree_root.getchildren():
-		# Ignore certain subtrees.
-		if xml_element.tag in [ "metadata" ]:
+	for xml_element in node.getchildren():
+		# Ignore certain subtrees and processing instructions
+		if xml_element.tag in [ "metadata" ] or not isinstance(xml_element.tag, basestring):
 			continue
 
-		html_tree.append(build_html_tree(etree.ElementTree(xml_element)))
+		html_tree.append(build_html_tree(xml_element))
 
 	return html_tree
 
 def convert_xml(xml_file_path, url_fn=create_link_url):
 	xml_tree = etree.parse(xml_file_path, etree.XMLParser(recover=True))
 
-	return etree.ElementTree(build_html_tree(xml_tree, url_fn))
+	return etree.ElementTree(build_html_tree(xml_tree.getroot(), url_fn))
 
 # XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
 def write_html(html_tree, html_file_path):
