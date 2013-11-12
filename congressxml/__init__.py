@@ -208,16 +208,18 @@ def convert_element(xml_element, url_fn=create_link_url):
 		xml_tag_name = xml_tag[len(catoxml_ns):]
 		html_attributes["class"][html_attributes["class"].index(xml_tag)] = xml_tag_name
 
-		html_tag = "span"
 		if xml_tag_name in [ "entity-ref" ]:
 			# We aren't allowed to have nested links.
 			if can_be_link(xml_element):
+				html_tag = "a"
 
 				href = url_fn(xml_element)
 				if href:
-					html_tag = "a"
 					html_attributes["href"] = href
-
+			else:
+				html_tag = "span"
+		else:
+			html_tag = "span"
 	else:
 		# Sections
 		if xml_tag in [ "bill", "resolution", "amendment-doc" ]:
@@ -253,13 +255,12 @@ def convert_element(xml_element, url_fn=create_link_url):
 
 		# Text-level semantics
 		elif xml_tag in [ "external-xref", "internal-xref", "footnone-ref" ]:
-			html_tag = "span"
 			# We aren't allowed to have nested links.
 			if can_be_link(xml_element):
+				html_tag = "a"
 
 				href = url_fn(xml_element)
 				if href:
-					html_tag = "a"
 					html_attributes["href"] = href
 
 				if xml_tag in [ "external-xref" ]:
