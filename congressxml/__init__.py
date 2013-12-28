@@ -227,6 +227,10 @@ def convert_element(xml_element, url_fn=create_link_url):
 			html_tag = "article"
 		elif xml_tag in [ "form", "action", "legis-body", "resolution-body", "division", "subdivision", "title", "subtitle", "chapter", "subchapter", "part", "subpart", "section", "subsection", "paragraph", "subparagraph", "clause", "subclause", "item", "subitem", "quoted-block", "attestation", "attestation-group", "endorsement", "amendment-form", "amendment-body", "amendment", "amendment-block", "non-statutory-material", "toc", "account", "subaccount", "subsubaccount", "subsubsubaccount", "committee-appointment-paragraph", "preamble", "whereas", "constitution-article", "rule", "rules-clause", "rules-paragraph", "rules-subparagraph", "rules-subdivision", "rules-item", "rules-subitem", "table" ]:
 			html_tag = "section"
+
+			section_id = xml_element.get("id")
+			if section_id:
+				html_attributes["id"] = "section_%s" % ( section_id )
 		elif xml_tag in [ "header", "ttitle" ]:
 			html_tag = "h1"
 		elif xml_tag in [ "subheader", "rules-clause-header" ]:
